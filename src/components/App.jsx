@@ -97,14 +97,14 @@ export class App extends Component {
 
           <Filter value={filter} onChange={changeFilter} />
 
-          {/* <ContactList visibleContacts={visibleContacts} /> */}
-          <ul>
+          <ContactList visibleContacts={visibleContacts} />
+          {/* <ul>
             {visibleContacts.map(contact => (
               <li key={contact.id}>
                 {contact.name}: {contact.number}
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
       </div>
     );
