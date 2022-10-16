@@ -1,18 +1,9 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Component } from 'react';
-import * as yup from 'yup';
 import { nanoid } from 'nanoid';
 import { Filter } from './Filter/Filter';
-import { ContactList } from './ContactList/ContactList';
-
-const schema = yup.object().shape({
-  name: yup.string().required(),
-});
-
-const initialValues = {
-  name: '',
-  number: '',
-};
+import ContactList from './ContactList/ContactList';
+import { ContactForm } from './ContactForm/ContactForm';
+import { Wrapper } from './App.styled';
 
 export class App extends Component {
   state = {
@@ -22,8 +13,6 @@ export class App extends Component {
       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
-    name: '',
-    number: '',
     filter: '',
   };
 
@@ -37,76 +26,55 @@ export class App extends Component {
     );
   };
 
-  render() {
-    const { contacts, filter } = this.state;
+  addContact = (name, number) => {
+    const { contacts } = this.state;
+    const contact = {
+      id: nanoid(),
+      name,
+      number,
+    };
 
-    const handleSubmit = (values, { resetForm }) => {
-      const newContact = {
-        id: nanoid(),
-        name: values.name,
-        number: values.number,
-      };
-
-      this.setState(({ contacts }) => ({
-        contacts: [newContact, ...contacts],
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
+      alert(`${name} is already in contacts.`);
+    } else {
+      this.setState(prevState => ({
+        contacts: [contact, ...prevState.contacts],
       }));
+    }
+  };
 
-      resetForm();
-    };
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
 
-    const visibleContacts = this.getVisibleContacts();
+  changeFilter = e => {
+    this.setState({
+      filter: e.currentTarget.value,
+    });
+  };
 
-    const changeFilter = e => {
-      this.setState({
-        filter: e.currentTarget.value,
-      });
-    };
+  render() {
+    const { filter } = this.state;
+    const { addContact, deleteContact, changeFilter, getVisibleContacts } =
+      this;
 
     return (
-      <div>
+      <Wrapper>
         <h2>Phonebook</h2>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          validationSchema={schema}
-        >
-          <Form>
-            <label htmlFor="name">
-              Name
-              <Field
-                type="text"
-                name="name"
-                pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-                title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-                required
-              />
-              <ErrorMessage name="name" />
-            </label>
-            <br />
-            <label htmlFor="number">
-              Number
-              <Field type="tel" name="number" required />
-              <ErrorMessage name="number" />
-            </label>
-            <br />
-            <button type="submit">Add contact</button>
-          </Form>
-        </Formik>
-        <div>
-          <h2>Contacts</h2>
-
-          <Filter value={filter} onChange={changeFilter} />
-
-          <ContactList visibleContacts={visibleContacts} />
-          {/* <ul>
-            {visibleContacts.map(contact => (
-              <li key={contact.id}>
-                {contact.name}: {contact.number}
-              </li>
-            ))}
-          </ul> */}
-        </div>
-      </div>
+        <ContactForm onSubmit={addContact} />
+        <h2>Contacts</h2>
+        <Filter value={filter} onChange={changeFilter} />
+        <ContactList
+          visibleContacts={getVisibleContacts()}
+          onDeleteContact={deleteContact}
+        />
+      </Wrapper>
     );
   }
 }
