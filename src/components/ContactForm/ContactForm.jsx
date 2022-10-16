@@ -1,5 +1,7 @@
 import { Component } from 'react';
 import { Formik, Form, Field } from 'formik';
+import { FormLabel, Button } from './ContactForm.styled';
+
 // import * as yup from 'yup';
 
 // const phoneRegExp = /^[0-9\+]{1,}[0-9\-]{3,15}$/;
@@ -41,7 +43,7 @@ export class ContactForm extends Component {
         // validationSchema={schema}
       >
         <Form>
-          <label htmlFor="name">
+          <FormLabel htmlFor="name">
             Name
             <Field
               type="text"
@@ -51,9 +53,9 @@ export class ContactForm extends Component {
               required
             />
             {/* <ErrorMessage name="name" /> */}
-          </label>
+          </FormLabel>
           <br />
-          <label htmlFor="number">
+          <FormLabel htmlFor="number">
             Number
             <Field
               type="tel"
@@ -62,9 +64,9 @@ export class ContactForm extends Component {
               required
             />
             {/* <ErrorMessage name="number" /> */}
-          </label>
+          </FormLabel>
           <br />
-          <button type="submit">Add contact</button>
+          <Button type="submit">Add contact</Button>
         </Form>
       </Formik>
     );
